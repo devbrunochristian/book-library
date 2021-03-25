@@ -1,13 +1,30 @@
-import App from './App'
-import dotenv from 'dotenv'
-import AppInit from './interfaces/AppInit'
-dotenv.config()
+import Server from './Server';
+import dotenv from 'dotenv';
+import UserController from './controllers/UserController';
+import { json, RequestHandler, urlencoded } from 'express';
+import morgan from 'morgan';
+import BaseController from './controllers/BaseController';
+dotenv.config();
+import express from 'express';
 
-const appInit: AppInit = {
-    PORT: process.env.PORT
-}
+export const app = express();
 
-const app = new App(appInit)
+const server = new Server(app, Number(process.env.PORT));
 
-app.start()
+const controllers: Array<BaseController> = [new UserController()];
 
+const globalMiddleware: Array<RequestHandler> = [
+    json(),
+    urlencoded({ extended: false }),
+    morgan('tiny'),
+];
+
+Promise.resolve()
+    // .then(() => server.initDatabase())
+    .then(() => {
+        server.loadGlobalMiddleware(globalMiddleware);
+        server.loadControllers(controllers);
+        server.run();
+    });
+
+export default server;
