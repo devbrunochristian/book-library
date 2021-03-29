@@ -8,7 +8,7 @@ describe('User Service ', () => {
 
   let createdUser: UserInterface;
 
-  describe.skip("POST /auth/register - UserService.register:", () => {
+  describe("POST /auth/register - UserService.register:", () => {
     it('Should create new user', async () => {
       const response = await request(app)
         .post('/auth/register')

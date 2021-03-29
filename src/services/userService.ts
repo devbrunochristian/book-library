@@ -40,9 +40,9 @@ export default abstract class UserService {
         password: hashPassword
       })
       await user.save()
-      return res.status(201).json({ user })
+      res.status(201).json({ user })
     } catch (error) {
-      return res.status(500).json({ error })
+      res.status(500).json({ error })
     }
 
   }
@@ -76,11 +76,13 @@ export default abstract class UserService {
       res.status(200).json({ accessToken })
 
     } catch (error) {
-      return res.status(500).json({ error })
+      res.status(500).json({ error })
 
     }
 
   }
+
+
 
 
 }
