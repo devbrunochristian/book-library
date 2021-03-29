@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import mongoose from 'mongoose';
 import { Application, RequestHandler } from 'express';
 import BaseController from './controllers/BaseController';
 
@@ -24,7 +25,16 @@ export default class Server {
     });
   }
 
-  //async initDatabase(): Promise<void> {
-  //     // ...
-  // }
+  async initDatabase(): Promise<void> {
+
+    mongoose
+      .connect(process.env.MONGO_URL!, { useNewUrlParser: true, useUnifiedTopology: true })
+      .then(() => {
+        return console.log(`Successfully connected to ${process.env.MONGO_URL}`);
+      })
+      .catch(error => {
+        console.log("Error connecting to database: ", error);
+        return process.exit(1);
+      });
+  }
 }

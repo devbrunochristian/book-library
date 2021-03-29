@@ -4,8 +4,8 @@ import UserController from './controllers/UserController';
 import { json, RequestHandler, urlencoded } from 'express';
 import morgan from 'morgan';
 import BaseController from './controllers/BaseController';
-dotenv.config();
 import express from 'express';
+dotenv.config();
 
 export const app = express();
 
@@ -20,7 +20,7 @@ const globalMiddleware: Array<RequestHandler> = [
 ];
 
 Promise.resolve()
-    // .then(() => server.initDatabase())
+    .then(() => server.initDatabase())
     .then(() => {
         server.loadGlobalMiddleware(globalMiddleware);
         server.loadControllers(controllers);

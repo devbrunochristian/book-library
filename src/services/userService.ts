@@ -1,26 +1,86 @@
-import { NextFunction, Request, Response } from 'express';
-
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const users = [
-  { name: 'bruno', age: 26 },
-  { name: 'christian', age: 27 },
-];
-export default abstract class UserService {
-  static getUsers = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Response => {
-    return res.status(200).json({ users });
-  };
+import { Request, Response } from 'express';
+import User from '../Models/userModel';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
-  static createUser = (req: Request, res: Response): Response => {
-    const { name, age } = req.body;
-    if (!name === undefined || !age === undefined) {
-      return res.status(517).json({ error: 'error' });
+
+
+export default abstract class UserService {
+  static register = async (req: Request, res: Response) => {
+
+    const { name, email, password } = req.body
+
+    if (!name) {
+      return res.status(400).json({ error: 'Name is required!' })
     }
-    const newUser = { name, age };
-    users.push(newUser);
-    return res.status(201).json({ user: newUser });
-  };
+    if (!password) {
+      return res.status(400).json({ error: 'Password is required!' })
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must have at minimum 6 characters!' })
+    }
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required!' })
+    }
+    const existUser = await User.findOne({ email })
+    if (existUser) {
+      return res.status(400).json({ error: 'Email already registred!' })
+    }
+
+    const salts = await bcrypt.genSalt(10)
+    const hashPassword = await bcrypt.hash(password, salts)
+
+
+    try {
+      const user = new User({
+        name,
+        email,
+        password: hashPassword
+      })
+      await user.save()
+      return res.status(201).json({ user })
+    } catch (error) {
+      return res.status(500).json({ error })
+    }
+
+  }
+
+  static login = async (req: Request, res: Response) => {
+
+    const { email, password } = req.body
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required!' })
+    }
+
+    if (!password) {
+      return res.status(400).json({ error: 'Password is required!' })
+    }
+
+    try {
+      const existUser = await User.findOne({ email })
+
+      if (!existUser) {
+        return res.status(400).json({ error: 'User not found!' })
+      }
+
+      const isMatch = await bcrypt.compare(password, existUser.password)
+      if (!isMatch) {
+        return res.status(400).json({ error: 'Password is wrong!' })
+
+      }
+
+      const accessToken = jwt.sign({ name: existUser.name, email: existUser.email }, process.env.JWT_SECRET!)
+      res.status(200).json({ accessToken })
+
+    } catch (error) {
+      return res.status(500).json({ error })
+
+    }
+
+  }
+
+
 }

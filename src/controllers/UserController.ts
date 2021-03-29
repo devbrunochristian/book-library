@@ -2,21 +2,23 @@ import UserService from '../services/userService';
 import BaseController, { Methods } from './BaseController';
 
 export default class UserController extends BaseController {
-    path = '/users';
+    path = '/auth';
     routes = [
-        {
-            path: '/',
-            method: Methods.GET,
-            handler: UserService.getUsers,
-            localMiddleware: [],
-        },
 
         {
-            path: '/',
+            path: '/register',
             method: Methods.POST,
-            handler: UserService.createUser,
+            handler: UserService.register,
             localMiddleware: [],
         },
+        {
+            path: '/login',
+            method: Methods.POST,
+            handler: UserService.login,
+            localMiddleware: [],
+        }
+
+
     ];
     constructor() {
         super();
