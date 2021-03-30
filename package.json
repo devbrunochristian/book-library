@@ -1,5 +1,5 @@
 {
-  "name": "financial_manager",
+  "name": "book_library",
   "version": "1.0.0",
   "main": "src/index.ts",
   "author": "Bruno Christian Da Silva <devbrunochristian@gmail.com>",
