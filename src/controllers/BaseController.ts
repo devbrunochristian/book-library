@@ -1,5 +1,6 @@
 import { Response, Request, NextFunction, Router } from 'express';
 
+
 export enum Methods {
     GET = 'GET',
     POST = 'POST',
@@ -26,21 +27,19 @@ export default abstract class BaseController {
 
     public setRoutes = (): Router => {
         for (const route of this.routes) {
-            for (const mw of route.localMiddleware) {
-                this.router.use(route.path, mw);
-            }
+
             switch (route.method) {
                 case 'GET':
-                    this.router.get(route.path, route.handler);
+                    this.router.get(route.path, route.localMiddleware, route.handler);
                     break;
                 case 'POST':
-                    this.router.post(route.path, route.handler);
+                    this.router.post(route.path, route.localMiddleware, route.handler);
                     break;
                 case 'PUT':
-                    this.router.put(route.path, route.handler);
+                    this.router.put(route.path, route.localMiddleware, route.handler);
                     break;
                 case 'DELETE':
-                    this.router.delete(route.path, route.handler);
+                    this.router.delete(route.path, route.localMiddleware, route.handler);
                     break;
                 default:
             }

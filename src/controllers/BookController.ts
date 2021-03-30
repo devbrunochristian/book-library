@@ -1,5 +1,8 @@
+import authenticateJWT from '../middlewares/authenticateJWT';
 import BookService from '../services/bookService';
 import BaseController, { Methods } from './BaseController';
+
+
 
 export default class BookController extends BaseController {
     path = '/books';
@@ -9,31 +12,31 @@ export default class BookController extends BaseController {
             path: '/',
             method: Methods.GET,
             handler: BookService.getBooks,
-            localMiddleware: [],
+            localMiddleware: [authenticateJWT],
         },
         {
             path: '/:id',
             method: Methods.GET,
             handler: BookService.getBook,
-            localMiddleware: [],
+            localMiddleware: [authenticateJWT],
         },
         {
             path: '/',
             method: Methods.POST,
             handler: BookService.createBook,
-            localMiddleware: [],
+            localMiddleware: [authenticateJWT],
         },
         {
             path: '/:id',
             method: Methods.DELETE,
             handler: BookService.deleteBook,
-            localMiddleware: [],
+            localMiddleware: [authenticateJWT],
         },
         {
             path: '/:id',
             method: Methods.PUT,
             handler: BookService.updateBook,
-            localMiddleware: [],
+            localMiddleware: [authenticateJWT],
         }
 
 
