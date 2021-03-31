@@ -2,10 +2,30 @@
 import mongoose from 'mongoose';
 import { Application, RequestHandler } from 'express';
 import BaseController from './controllers/BaseController';
+import upload from './middlewares/imageUploader';
 
 export default class Server {
 
-  constructor(private app: Application, private readonly port: number) { }
+  constructor(private app: Application, private readonly port: number) {
+
+    // app.post('/uploadfile', upload.single('myFile'), (req, res, next) => {
+    //   const file = req.file
+    //   if (!file) {
+    //     res.status(404).json({ error: 'File not found' })
+    //   }
+    //   try {
+    //     res.send(file)
+
+
+    //   } catch (error) {
+    //     res.status(500).json({ error })
+
+    //   }
+
+
+
+    // })
+  }
 
   run() {
     return this.app.listen(this.port, () => {
@@ -36,5 +56,8 @@ export default class Server {
         console.log("Error connecting to database: ", error);
         return process.exit(1);
       });
+
   }
 }
+
+

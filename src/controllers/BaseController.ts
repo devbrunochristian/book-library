@@ -1,4 +1,5 @@
 import { Response, Request, NextFunction, Router } from 'express';
+import upload from '../middlewares/imageUploader';
 
 
 export enum Methods {

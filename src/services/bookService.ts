@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import Book from '../Models/bookModel';
+import path from 'path';
+import fs from 'fs'
 
 
 
@@ -30,29 +32,38 @@ export default abstract class BookService {
 
     static createBook = async (req: Request, res: Response) => {
         const { title, author, category } = req.body
+        const file = req.file
+
+        if (!file) {
+            return res.status(404).json({ error: 'File not found' })
+        }
+
+        if (!title) {
+            return res.status(400).json({ error: 'Title is required!' })
+
+        }
+
+        if (!author) {
+            return res.status(400).json({ error: 'Author is required!' })
+
+        }
+
+        if (!category) {
+            return res.status(400).json({ error: 'Category is required!' })
+
+        }
 
         try {
 
             const book = new Book({
                 title,
                 author,
-                category
+                category,
+                img: {
+                    data: fs.readFileSync(path.join(__dirname, '../uploads/' + req.file.filename)),
+                    contentType: req.file.mimetype
+                }
             })
-
-            if (!title) {
-                return res.status(400).json({ error: 'Title is required!' })
-
-            }
-
-            if (!author) {
-                return res.status(400).json({ error: 'Author is required!' })
-
-            }
-
-            if (!category) {
-                return res.status(400).json({ error: 'Category is required!' })
-
-            }
 
             await book.save()
             res.status(201).json({ book })

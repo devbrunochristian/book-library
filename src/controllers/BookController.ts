@@ -1,4 +1,5 @@
 import authenticateJWT from '../middlewares/authenticateJWT';
+import upload from '../middlewares/imageUploader';
 import BookService from '../services/bookService';
 import BaseController, { Methods } from './BaseController';
 
@@ -24,7 +25,7 @@ export default class BookController extends BaseController {
             path: '/',
             method: Methods.POST,
             handler: BookService.createBook,
-            localMiddleware: [authenticateJWT],
+            localMiddleware: [authenticateJWT, upload.single('myFile')],
         },
         {
             path: '/:id',

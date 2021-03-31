@@ -1,5 +1,6 @@
 import { app } from '..';
 import request from 'supertest';
+import path from 'path';
 import { BookInterface } from '../Models/bookModel';
 
 let mockBook: BookInterface
@@ -12,12 +13,11 @@ describe('Book Service ', () => {
             const response = await request(app)
                 .post('/books')
                 .set('Authorization', `Bearer ${testUserToken}`)
-                .send({
-                    title: "Rich Dad Poor Dad",
-                    category: "finance",
-                    author: " Robert Kiyosaki",
-                })
-
+                .field('Content-Type', 'multipart/form-data')
+                .field('title', "Rich Dad Poor Dad")
+                .field('category', "finance")
+                .field('author', " Robert Kiyosaki")
+                .attach('myFile', path.join(__dirname, './mock/' + 'test.jpeg'))
             expect(response.status).toBe(201);
             expect(response.body.book).toHaveProperty('title', 'Rich Dad Poor Dad');
             mockBook = response.body.book
@@ -27,11 +27,11 @@ describe('Book Service ', () => {
         it('Shouldn\'t create a new book without authorization token', async () => {
             const response = await request(app)
                 .post('/books')
-                .send({
-                    title: "Rich Dad Poor Dad",
-                    category: "finance",
-                    author: " Robert Kiyosaki",
-                })
+                .field('Content-Type', 'multipart/form-data')
+                .field('title', "Rich Dad Poor Dad")
+                .field('category', "finance")
+                .field('author', " Robert Kiyosaki")
+                .attach('myFile', path.join(__dirname, './mock/' + 'test.jpeg'))
 
             expect(response.status).toBe(401);
             expect(response.body.error).toBe('unauthorized');
@@ -40,11 +40,11 @@ describe('Book Service ', () => {
         it('Shouldn\'t create a new book without title', async () => {
             const response = await request(app)
                 .post('/books')
-                .send({
-                    category: "finance",
-                    author: " Robert Kiyosaki",
-                })
                 .set('Authorization', `Bearer ${testUserToken}`)
+                .field('Content-Type', 'multipart/form-data')
+                .field('category', "finance")
+                .field('author', " Robert Kiyosaki")
+                .attach('myFile', path.join(__dirname, './mock/' + 'test.jpeg'))
 
             expect(response.status).toBe(400);
             expect(response.body.error).toBe('Title is required!');
@@ -53,11 +53,11 @@ describe('Book Service ', () => {
         it('Shouldn\'t create a new book without author', async () => {
             const response = await request(app)
                 .post('/books')
-                .send({
-                    title: "Rich Dad Poor Dad",
-                    category: "finance",
-                })
                 .set('Authorization', `Bearer ${testUserToken}`)
+                .field('Content-Type', 'multipart/form-data')
+                .field('category', "finance")
+                .field('title', "Rich Dad Poor Dad")
+                .attach('myFile', path.join(__dirname, './mock/' + 'test.jpeg'))
 
             expect(response.status).toBe(400);
             expect(response.body.error).toBe('Author is required!');
@@ -67,15 +67,16 @@ describe('Book Service ', () => {
         it('Shouldn\'t create a new book without category', async () => {
             const response = await request(app)
                 .post('/books')
-                .send({
-                    title: "Rich Dad Poor Dad",
-                    author: " Robert Kiyosaki",
-                })
                 .set('Authorization', `Bearer ${testUserToken}`)
+                .field('Content-Type', 'multipart/form-data')
+                .field('title', "Rich Dad Poor Dad")
+                .field('author', " Robert Kiyosaki")
+                .attach('myFile', path.join(__dirname, './mock/' + 'test.jpeg'))
 
             expect(response.status).toBe(400);
             expect(response.body.error).toBe('Category is required!');
         });
+
     })
 
 

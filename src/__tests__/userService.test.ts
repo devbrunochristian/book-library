@@ -2,8 +2,6 @@ import { app } from '..';
 import request from 'supertest';
 import { UserInterface } from '../Models/userModel';
 
-const mockMail = `user.test.${Math.floor(Math.random() * 10)}@mail.com`
-
 describe('User Service ', () => {
 
   let createdUser: UserInterface;
@@ -12,7 +10,7 @@ describe('User Service ', () => {
     it('Should create new user', async () => {
       const response = await request(app)
         .post('/auth/register')
-        .send({ name: 'Nick', email: mockMail, password: '2233222' });
+        .send({ name: 'Nick', email: `user.test.${Math.random()}@mail.com`, password: '2233222' });
       expect(response.status).toBe(201);
       expect(response.body.user).toHaveProperty('name', 'Nick');
       createdUser = response.body.user
@@ -56,7 +54,7 @@ describe('User Service ', () => {
     it('Shouldn\'t create a user with duplicated email', async () => {
       const response = await request(app)
         .post('/auth/register')
-        .send({ name: 'nick', email: mockMail, password: '23457222' });
+        .send({ name: 'nick', email: createdUser.email, password: '23457222' });
       expect(response.status).toBe(400);
       expect(response.body.error).toBe('Email already registred!')
     });
